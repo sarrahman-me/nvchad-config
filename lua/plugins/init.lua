@@ -96,7 +96,6 @@ return {
       },
       highlight = { enable = true },
       indent = { enable = true },
-      autotag = { enable = true }, -- supaya <div></div> auto close bareng plugin autotag
     },
     config = function(_, opts)
       require("nvim-treesitter.configs").setup(opts)

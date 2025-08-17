@@ -10,6 +10,10 @@ if not vim.uv.fs_stat(lazypath) then
 end
 
 vim.opt.rtp:prepend(lazypath)
+vim.opt.number = true -- tampilkan nomor baris
+vim.opt.relativenumber = true -- jadikan relatif untuk baris selain yang aktif
+vim.opt.numberwidth = 2 -- lebar kolom nomor (opsional)
+vim.opt.signcolumn = "yes" -- biar tanda diagnostic gak geser-geser (opsional)
 
 local lazy_config = require "configs.lazy"
 
