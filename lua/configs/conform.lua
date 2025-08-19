@@ -13,16 +13,17 @@ local options = {
 
     python = { "black" },
     rust = { "rustfmt" },
-    go = { "gofmt" },
-    sql = { "sql-formatter" },
+    -- sql = { "sql-formatter" },
     sh = { "shfmt" },
   },
 
   -- Format otomatis setiap save
-  format_on_save = {
-    timeout_ms = 500,
-    lsp_fallback = true, -- kalau formatter nggak ada, fallback ke LSP
-  },
+  format_on_save = function(bufnr)
+    if vim.bo[bufnr].filetype == "sql" then
+      return nil -- no auto-format for SQL
+    end
+    return { timeout_ms = 500, lsp_fallback = true }
+  end,
 }
 
 return options
