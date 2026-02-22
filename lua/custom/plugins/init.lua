@@ -113,7 +113,4 @@ return {
       end
     end,
   },
-
-  -- Plugin untuk melacak waktu coding
-  { "wakatime/vim-wakatime", lazy = false },
 }
