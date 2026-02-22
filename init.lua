@@ -4,7 +4,9 @@ vim.g.mapleader = " "
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 
-if not vim.uv.fs_stat(lazypath) then
+local uv = vim.uv or vim.loop
+
+if not uv.fs_stat(lazypath) then
   local repo = "https://github.com/folke/lazy.nvim.git"
   vim.fn.system { "git", "clone", "--filter=blob:none", repo, "--branch=stable", lazypath }
 end
@@ -12,6 +14,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local lazy_config = require "configs.lazy"
+
+-- setup chadrc
+vim.g.nvchad_config = "custom.chadrc"
 
 -- load plugins
 require("lazy").setup({
@@ -22,16 +27,20 @@ require("lazy").setup({
     import = "nvchad.plugins",
   },
 
-  { import = "plugins" },
+  { import = "custom.plugins" },
 }, lazy_config)
 
 -- load theme
-dofile(vim.g.base46_cache .. "defaults")
-dofile(vim.g.base46_cache .. "statusline")
+pcall(function()
+  dofile(vim.g.base46_cache .. "defaults")
+  dofile(vim.g.base46_cache .. "statusline")
+end)
 
-require "options"
-require "autocmds"
+require "nvchad.options"
+require "custom.options"
+require "custom.autocmds"
 
 vim.schedule(function()
-  require "mappings"
+  pcall(require, "nvchad.mappings")
+  require "custom.mappings"
 end)
