@@ -3,14 +3,16 @@ return {
   {
     "stevearc/conform.nvim",
     event = "BufWritePre",
-    opts = require "configs.conform",
+    opts = function()
+      return require "custom.configs.conform"
+    end,
   },
 
   -- LSP core + override konfigurasi kamu
   {
     "neovim/nvim-lspconfig",
     config = function()
-      require "configs.lspconfig"
+      require "custom.configs.lspconfig"
     end,
   },
 
@@ -25,6 +27,7 @@ return {
         "tailwindcss",
         "sqls",
         "clangd",
+        "vtsls", -- modern typescript server
         "eslint",
         "jsonls",
         "bashls",
@@ -37,11 +40,30 @@ return {
         "docker_compose_language_service",
         "nginx_language_server",
         "neocmake",
-        "lemminx",
-        "hls",
-        "pbls",
       },
-      automatic_installation = false,
+      automatic_installation = true,
+    },
+  },
+
+  -- Tool installer untuk non-LSP (formatter/linter)
+  {
+    "WhoIsSethDaniel/mason-tool-installer.nvim",
+    dependencies = { "williamboman/mason.nvim" },
+    event = "VeryLazy",
+    opts = {
+      ensure_installed = {
+        "stylua",
+        "prettierd",
+        "prettier",
+        "black",
+        "rustfmt",
+        "shfmt",
+        "sql-formatter",
+        "eslint_d",
+        "hadolint",
+        "shellcheck",
+        "clang-format",
+      },
     },
   },
 
@@ -56,9 +78,6 @@ return {
         sources = {
           extras.diagnostics.eslint_d,
           extras.code_actions.eslint_d,
-          -- contoh tambahan (opsional):
-          -- null_ls.builtins.diagnostics.shellcheck,
-          -- null_ls.builtins.diagnostics.hadolint,
         },
       }
     end,
@@ -75,41 +94,22 @@ return {
     event = { "BufReadPost", "BufNewFile" },
     opts = {
       ensure_installed = {
-        "bash",
-        "c",
-        "cpp",
-        "css",
-        "dockerfile",
-        "go",
-        "html",
-        "javascript",
-        "json",
-        "lua",
-        "markdown",
-        "markdown_inline",
-        "python",
-        "rust",
-        "sql",
-        "tsx",
-        "typescript",
-        "vim",
-        "vimdoc",
-        "yaml",
-        "haskell",
-        "proto",
+        "bash", "c", "cpp", "cmake", "css", "dockerfile", "go", "html",
+        "javascript", "json", "lua", "markdown", "markdown_inline",
+        "nginx", "python", "rust", "sql", "tsx", "typescript", "vim",
+        "vimdoc", "yaml",
       },
       highlight = { enable = true },
       indent = { enable = true },
     },
     config = function(_, opts)
-      local status, ts_configs = pcall(require, "nvim-treesitter.configs")
+      -- Di Neovim 0.11, kita coba setup secara manual tanpa bergantung pada modul configs jika tidak ada
+      local status, configs = pcall(require, "nvim-treesitter.configs")
       if status then
-        ts_configs.setup(opts)
+        configs.setup(opts)
       else
-        local status2, ts = pcall(require, "nvim-treesitter")
-        if status2 then
-          ts.setup(opts)
-        end
+        -- Fallback: Jika module hilang, kita tetap aktifkan highlight secara native
+        vim.api.nvim_command("TSUpdate")
       end
     end,
   },

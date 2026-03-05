@@ -1,6 +1,26 @@
 vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
 vim.g.mapleader = " "
 
+-- Silence all deprecation warnings (LSP, etc) for Neovim 0.11
+vim.env.NVIM_LSPCONFIG_NO_DEPRECATE = "1"
+vim.g.deprecation_warnings = false
+vim.diagnostic.config({
+  virtual_text = true,
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+})
+
+-- Matikan warning dari core nvim
+local notify = vim.notify
+vim.notify = function(msg, ...)
+  if msg:match("deprecated") or msg:match("deprecate") then
+    return
+  end
+  notify(msg, ...)
+end
+
 -- bootstrap lazy and all plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 

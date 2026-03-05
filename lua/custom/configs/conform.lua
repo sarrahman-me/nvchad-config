@@ -13,19 +13,20 @@ local options = {
 
     python = { "black" },
     rust = { "rustfmt" },
-    -- sql = { "sql-formatter" },
+    sql = { "sql-formatter" },
     sh = { "shfmt" },
     proto = { "buf" },
     haskell = { "fourmolu", "ormolu", "stylish_haskell" },
+    cpp = { "clang-format" },
+    c = { "clang-format" },
+    cmake = { "cmake_format" },
   },
 
   -- Format otomatis setiap save
-  format_on_save = function(bufnr)
-    if vim.bo[bufnr].filetype == "sql" then
-      return nil -- no auto-format for SQL
-    end
-    return { timeout_ms = 500, lsp_fallback = true }
-  end,
+  format_on_save = {
+    timeout_ms = 500,
+    lsp_fallback = true,
+  },
 }
 
 return options
